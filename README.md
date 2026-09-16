@@ -95,17 +95,15 @@ AutoWIFI includes an MCP (Model Context Protocol) server, making all wireless pe
 pip install autowifi[mcp]
 ```
 
-### Configure your AI agent
-
-`autowifi-mcp` is a standard stdio MCP server, so it works with any MCP-compatible client. Point your client at the `autowifi-mcp` command:
-
-**Claude Code:**
+### Configure for Claude Code
 
 ```bash
 claude mcp add --scope user autowifi -- autowifi-mcp
 ```
 
-**Cursor** — add to `.cursor/mcp.json`:
+### Configure for Cursor
+
+Add to `.cursor/mcp.json`:
 
 ```json
 {
@@ -116,8 +114,6 @@ claude mcp add --scope user autowifi -- autowifi-mcp
   }
 }
 ```
-
-**Codex, Gemini CLI, or any other MCP client** — use the same `"command": "autowifi-mcp"` entry in that client's stdio MCP server config (name and file differ per client; consult that client's docs).
 
 ### Available MCP tools
 
