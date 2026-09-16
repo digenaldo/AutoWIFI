@@ -117,6 +117,32 @@ Then point your MCP client at `sudo -n <path>` instead of the bare command — t
 claude mcp add --scope user autowifi -- sudo -n $(which autowifi-mcp)
 ```
 
+Claude Code's auto mode classifier also blocks these tool calls by default even after the server is registered and running as root — `scan_networks` gets denied as a "Third-Party Attack" (a monitor-mode scan necessarily picks up every nearby network's broadcast traffic, not just yours, and the classifier can't tell that apart from recon on someone else's network), and the model **cannot grant itself** the exemption — editing its own permissions is separately blocked as "Self-Modification". You have to add the allowlist yourself, in `~/.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__autowifi__list_interfaces",
+      "mcp__autowifi__check_dependencies",
+      "mcp__autowifi__enable_monitor",
+      "mcp__autowifi__disable_monitor",
+      "mcp__autowifi__scan_networks",
+      "mcp__autowifi__get_recommended_attacks",
+      "mcp__autowifi__capture_handshake",
+      "mcp__autowifi__capture_pmkid",
+      "mcp__autowifi__wps_pixie_dust",
+      "mcp__autowifi__deauth",
+      "mcp__autowifi__crack_handshake",
+      "mcp__autowifi__verify_handshake",
+      "mcp__autowifi__find_wordlists"
+    ]
+  }
+}
+```
+
+(Merge this into your existing settings.json rather than replacing it wholesale.) This is Claude Code-specific — the other clients below don't have this classifier layer.
+
 ### Configure for Cursor
 
 Add to `.cursor/mcp.json`:
