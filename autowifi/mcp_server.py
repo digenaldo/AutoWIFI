@@ -203,6 +203,10 @@ def _serialize_network(net) -> dict:
         "power": net.power,
         "wps": net.wps,
         "clients": len(net.clients) if net.clients else 0,
+        "client_list": [
+            {"mac": c.mac, "power": c.power, "packets": c.packets}
+            for c in (net.clients or [])
+        ],
     }
 
 

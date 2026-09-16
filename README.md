@@ -165,7 +165,7 @@ Add to `.cursor/mcp.json`:
 | `list_interfaces` | List wireless interfaces with mode/driver/chipset |
 | `enable_monitor` | Enable monitor mode on an interface |
 | `disable_monitor` | Restore interface to managed mode |
-| `scan_networks` | Discover WiFi networks with encryption, signal, WPS, clients |
+| `scan_networks` | Discover WiFi networks with encryption, signal, WPS, and per-client MAC/signal/packet details |
 | `get_recommended_attacks` | Get attack vectors for a target based on encryption |
 | `capture_handshake` | Capture WPA/WPA2 4-way handshake |
 | `capture_pmkid` | Capture PMKID hash (clientless) |
