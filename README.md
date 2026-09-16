@@ -95,10 +95,26 @@ AutoWIFI includes an MCP (Model Context Protocol) server, making all wireless pe
 pip install autowifi[mcp]
 ```
 
+### Privileges (required)
+
+Every tool that touches the wireless interface (`list_interfaces`, `enable_monitor`, `scan_networks`, `capture_handshake`, `deauth`, etc.) needs root, same as `sudo autowifi`. But MCP clients launch `autowifi-mcp` as a stdio subprocess with no TTY attached, so plain `sudo` can't prompt for a password there — the process just fails or hangs.
+
+Set up passwordless sudo scoped to the exact `autowifi-mcp` binary path (find it with `which autowifi-mcp`) — **not** a blanket NOPASSWD rule:
+
+```bash
+echo "$USER ALL=(root) NOPASSWD: $(which autowifi-mcp)" > /tmp/autowifi-mcp-sudoers
+sudo visudo -c -f /tmp/autowifi-mcp-sudoers   # validate before installing
+sudo install -m 0440 -o root -g root /tmp/autowifi-mcp-sudoers /etc/sudoers.d/autowifi-mcp
+```
+
+This grants passwordless root execution of a binary that can run deauth attacks and crack captured passwords — scope it to the exact absolute path only, and be aware that whoever can invoke that path non-interactively (e.g. anyone with write access to it) gets that privilege too.
+
+Then point your MCP client at `sudo -n <path>` instead of the bare command — the `-n` makes it fail fast rather than hang if the sudoers rule is ever missing.
+
 ### Configure for Claude Code
 
 ```bash
-claude mcp add --scope user autowifi -- autowifi-mcp
+claude mcp add --scope user autowifi -- sudo -n $(which autowifi-mcp)
 ```
 
 ### Configure for Cursor
@@ -109,7 +125,8 @@ Add to `.cursor/mcp.json`:
 {
   "mcpServers": {
     "autowifi": {
-      "command": "autowifi-mcp"
+      "command": "sudo",
+      "args": ["-n", "/path/to/autowifi-mcp"]
     }
   }
 }
